@@ -31,3 +31,6 @@ To run the Pinewood Technical Task locally (First check If you have met the requ
 - .NET 6
 - C# language version 9 or later
 - Roslyn 4.0 or later
+- 
+## Contact
+- If you have any futher issues please reach out by email
