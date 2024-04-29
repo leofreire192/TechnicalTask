@@ -1,7 +1,7 @@
 # Technical Task
 
 ## Overview
-The Pinewood Technical Task is a project consisting of both an API and a Razor Pages project. It serves as a demonstration of building a web application with CRUD (Create, Read, Update, Delete) functionality for managing customers.
+The Technical Task is a project consisting of both an API and a Razor Pages project. It serves as a demonstration of building a web application with CRUD (Create, Read, Update, Delete) functionality for managing customers.
 
 ## Features
 - **API Project**: Provides RESTful API endpoints for performing CRUD operations on customer data.
@@ -17,7 +17,8 @@ To run the Pinewood Technical Task locally (First check If you have met the requ
 2. Open the solution in Visual Studio.
 3. Build the solution to restore dependencies and ensure everything is set up correctly.
 4. Run both the API and Razor Pages projects locally.
-5. Access the application through a web browser to start interacting with it.
+5. To do this in Visual Studio you can right-click on the Solution -> Properties and select Multiple Startup Projects, in the drop-down for the CustomerAPI and the Technical Task select start.
+6. Access the application through a web browser to start interacting with it.
 
 ## Technologies Used
 - ASP.NET Core
