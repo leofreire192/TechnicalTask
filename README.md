@@ -1,4 +1,4 @@
-# Pinewood Technical Task
+# Technical Task
 
 ## Overview
 The Pinewood Technical Task is a project consisting of both an API and a Razor Pages project. It serves as a demonstration of building a web application with CRUD (Create, Read, Update, Delete) functionality for managing customers.
