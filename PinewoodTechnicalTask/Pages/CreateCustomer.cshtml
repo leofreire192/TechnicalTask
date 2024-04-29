@@ -1,0 +1,92 @@
+﻿@page
+@model CreateCustomerModel
+@{
+    ViewData["Title"] = "Create Customer";
+}
+
+<h1>Create Customer</h1>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success">
+        @Model.SuccessMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.FailureReason))
+{
+    <div class="alert alert-danger">
+        @Model.FailureReason
+    </div>
+}
+
+<script src="https://unpkg.com/libphonenumber-js@1.x/bundle/libphonenumber-min.js"></script>
+
+<script>
+    function validatePhoneNumber(inputElement) {
+        var phoneNumber = inputElement.value;
+        if (phoneNumber.trim() === '') {
+            inputElement.setCustomValidity("Please enter a phone number.");
+            return;
+        }
+        if (typeof libphonenumber === 'undefined') {
+            console.error("libphonenumber is not defined.");
+            return;
+        }
+        try {
+            var phoneNumberObj = libphonenumber.parsePhoneNumberFromString(phoneNumber, 'GB');
+            if (phoneNumberObj && phoneNumberObj.isValid()) {
+                inputElement.setCustomValidity("");
+            } else {
+                inputElement.setCustomValidity("Please enter a valid phone number.");
+            }
+        } catch (error) {
+            console.error("Error parsing phone number:", error);
+            inputElement.setCustomValidity("Please enter a valid phone number.");
+        }
+    }
+
+    window.onload = function () {
+        document.getElementById('phoneNumber').onchange = function () {
+            validatePhoneNumber(this);
+        };
+    };
+</script>
+
+<form method="post">
+    <div class="form-row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required asp-for="CustomerCreateRequest.FirstName" class="form-control" />
+                <span asp-validation-for="CustomerCreateRequest.FirstName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required asp-for="CustomerCreateRequest.LastName" class="form-control" />
+                <span asp-validation-for="CustomerCreateRequest.LastName" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required asp-for="CustomerCreateRequest.Email" class="form-control" />
+                <span asp-validation-for="CustomerCreateRequest.Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" required asp-for="CustomerCreateRequest.PhoneNumber" class="form-control" onchange="validatePhoneNumber(this)" />
+                <span asp-validation-for="CustomerCreateRequest.PhoneNumber" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group mt-3 mb-0">
+        <button type="submit" class="btn btn-primary">Create Customer</button>
+    </div>
+</form>

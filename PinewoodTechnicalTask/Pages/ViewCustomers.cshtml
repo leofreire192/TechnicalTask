@@ -1,0 +1,194 @@
+﻿@page
+@model ViewCustomersModel
+@{
+    ViewData["Title"] = "All Customers";
+}
+
+<h1>All Customers</h1>
+
+@if (Model.Customers != null && Model.Customers.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        @foreach (var customer in Model.Customers)
+        {
+            <tr>
+                <td><input id="firstName_@customer.Id" class="form-control" type="text" value="@customer.FirstName" readonly oninput="handleInputChange('@customer.Id')" /></td>
+                <td><input id="lastName_@customer.Id" class="form-control" type="text" value="@customer.LastName" readonly oninput="handleInputChange('@customer.Id')" /></td>
+                <td><input id="email_@customer.Id" class="form-control" type="text" value="@customer.Email" readonly oninput="handleInputChange('@customer.Id')" /></td>
+                <td><input id="phoneNumber_@customer.Id" class="form-control" type="text" value="@customer.PhoneNumber" readonly oninput="handleInputChange('@customer.Id')" /></td>
+                <td>
+                    <button id="editButton_@customer.Id" type="button" class="btn btn-primary" onclick="editCustomer('@customer.Id')">Edit</button>
+                    <button id="deleteButton_@customer.Id" type="button" class="btn btn-danger d-none" onclick="deleteCustomer('@customer.Id')">Delete</button>
+                    <button id="saveButton_@customer.Id" type="button" class="btn btn-success d-none" onclick="saveChanges('@customer.Id', '/Customer/' + '@customer.Id')">Save Changes</button>
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+else
+{
+    <p>No customers found.</p>
+}
+
+<div id="errorMessage" class="text-danger"></div>
+
+@section Scripts {
+    <script>
+        var originalValues = {};
+
+        function editCustomer(customerId) {
+            // Save original values when edit button is clicked
+            originalValues[customerId] = {
+                firstName: document.getElementById('firstName_' + customerId).value,
+                lastName: document.getElementById('lastName_' + customerId).value,
+                email: document.getElementById('email_' + customerId).value,
+                phoneNumber: document.getElementById('phoneNumber_' + customerId).value
+            };
+
+            // Toggle readonly attribute for input fields
+            var inputs = document.querySelectorAll('#firstName_' + customerId + ', #lastName_' + customerId + ', #email_' + customerId + ', #phoneNumber_' + customerId);
+            inputs.forEach(function (input) {
+                input.readOnly = !input.readOnly;
+            });
+
+            // Toggle button visibility
+            var editButton = document.querySelector('#editButton_' + customerId);
+            var deleteButton = document.querySelector('#deleteButton_' + customerId);
+            var saveButton = document.querySelector('#saveButton_' + customerId);
+            editButton.classList.toggle('d-none');
+            deleteButton.classList.toggle('d-none');
+            saveButton.classList.toggle('d-none');
+
+            // Disable save button initially
+            saveButton.disabled = true;
+        }
+
+        function handleInputChange(customerId) {
+            // Compare current values with original values
+            var currentValues = {
+                firstName: document.getElementById('firstName_' + customerId).value,
+                lastName: document.getElementById('lastName_' + customerId).value,
+                email: document.getElementById('email_' + customerId).value,
+                phoneNumber: document.getElementById('phoneNumber_' + customerId).value
+            };
+
+            var isChanged = !(
+                currentValues.firstName === originalValues[customerId].firstName &&
+                currentValues.lastName === originalValues[customerId].lastName &&
+                currentValues.email === originalValues[customerId].email &&
+                currentValues.phoneNumber === originalValues[customerId].phoneNumber
+            );
+
+            // Enable/disable save button based on whether changes are made
+            var saveButton = document.querySelector('#saveButton_' + customerId);
+            saveButton.disabled = !isChanged;
+
+            // Toggle delete button visibility based on edit state
+            var deleteButton = document.querySelector('#deleteButton_' + customerId);
+            deleteButton.classList.toggle('d-none', isChanged);
+        }
+
+        async function saveChanges(customerId, patchUrl) {
+            var firstNameInput = document.getElementById('firstName_' + customerId);
+            var lastNameInput = document.getElementById('lastName_' + customerId);
+            var emailInput = document.getElementById('email_' + customerId);
+            var phoneNumberInput = document.getElementById('phoneNumber_' + customerId);
+
+            var firstName = firstNameInput.value;
+            var lastName = lastNameInput.value;
+            var email = emailInput.value;
+            var phoneNumber = phoneNumberInput.value;
+
+            var customerModel = [];
+
+            // Check if fields have changed and include them in the customerModel
+            if (firstName !== originalValues[customerId].firstName) {
+                customerModel.push({ op: 'replace', path: '/FirstName', value: firstName });
+            }
+            if (lastName !== originalValues[customerId].lastName) {
+                customerModel.push({ op: 'replace', path: '/LastName', value: lastName });
+            }
+            if (email !== originalValues[customerId].email) {
+                customerModel.push({ op: 'replace', path: '/Email', value: email });
+            }
+            if (phoneNumber !== originalValues[customerId].phoneNumber) {
+                customerModel.push({ op: 'replace', path: '/PhoneNumber', value: phoneNumber });
+            }
+
+            // If no changes detected, do nothing
+            if (customerModel.length === 0) {
+                alert('No changes detected.');
+                return;
+            }
+
+            var url = 'https://localhost:7286' + '/Customer/' + customerId;
+            var response = await fetch(url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(customerModel)
+            });
+
+            if (!response.ok) {
+                var errorMessage = await response.text();
+                document.getElementById('errorMessage').innerText = errorMessage;
+            } else {
+                alert('Changes saved successfully.');
+                // Reset original values to current values
+                originalValues[customerId] = {
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    phoneNumber: phoneNumber
+                };
+                handleInputChange(customerId);
+
+                // Toggle back to normal
+                var editButton = document.querySelector('#editButton_' + customerId);
+                var deleteButton = document.querySelector('#deleteButton_' + customerId);
+                var saveButton = document.querySelector('#saveButton_' + customerId);
+                editButton.classList.remove('d-none');
+                deleteButton.classList.add('d-none');
+                saveButton.classList.add('d-none');
+
+                // Make input fields readonly again
+                var inputs = document.querySelectorAll('#firstName_' + customerId + ', #lastName_' + customerId + ', #email_' + customerId + ', #phoneNumber_' + customerId);
+                inputs.forEach(function (input) {
+                    input.readOnly = true;
+                });
+            }
+        }
+
+        async function deleteCustomer(customerId) {
+            var confirmDelete = confirm("Are you sure you want to delete this customer?");
+            if (!confirmDelete) return;
+
+            var url = 'https://localhost:7286' + '/Customer/' + customerId; 
+            var response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                var errorMessage = await response.text();
+                document.getElementById('errorMessage').innerText = errorMessage;
+            } else {
+                alert('Customer deleted successfully.');
+                window.location.reload();
+            }
+        }
+    </script>
+}

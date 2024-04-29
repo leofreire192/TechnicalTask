@@ -1,0 +1,47 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="display-4 text-center">Technical Task</h1>
+            <div class="text-left">
+                <p>
+                    <strong>Getting Started:</strong><br>
+                    You can click on "Create Customer" on the menu above to create a customer.<br>
+                    Click on <strong>
+                        "View Customers"
+                    </strong> to get a list of all customers. You can also edit and delete a customer.<br>
+                        Click on <strong>
+                            "Edit Customer"
+                        </strong> to get an option to delete.<br>
+                        Click on <strong>
+                            "Save Changes"
+                        </strong> to get save changes, any errors will appear below the grid<br>
+                        <strong>
+                            "Save Changes"
+                        </strong> will be greyed out till a change is made from the original input<br>
+                        <br></br>
+
+                        <strong>There are two methods of validation:</strong><br>
+                        - Create Customer Page: Done in the front-end.<br>
+                        - Edit Customer: Done on the back-end. <br>
+                        <br></br>
+                        This is strictly for your convenience to view the API Error Handling. <br>
+                        Typically, you'd validate this on the front-end.
+                        <br></br>
+
+                        <strong>Thank you for taking time to review!</strong><br>
+                </p>
+            </div>
+
+            <div class="mt-4 text-center">
+                <a href="/CreateCustomer" class="btn btn-primary mr-3">Create Customer</a>
+                <a href="/ViewCustomers" class="btn btn-primary">View Customers</a>
+            </div>
+        </div>
+    </div>
+</div>
