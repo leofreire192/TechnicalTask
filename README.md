@@ -27,7 +27,7 @@ To run the Pinewood Technical Task locally (First check If you have met the requ
 - HTML/CSS
 - JavaScript
 
-#Requirements
+## Requirements
 - .NET 6
 - C# language version 9 or later
 - Roslyn 4.0 or later
